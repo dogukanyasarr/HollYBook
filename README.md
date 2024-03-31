@@ -1,2 +1,2 @@
 # HollyBook
-Film, Dizi ve Kitap
+Proje dosyaları ve değişiklikler master branch içerisinde bulunuyor.
