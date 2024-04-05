@@ -1,11 +1,24 @@
-import { View, Text,StyleSheet, TextInput, Pressable, Image, Button } from "react-native";
+import { View, Text,StyleSheet, TextInput, Pressable, Image, Button, ScrollView } from "react-native";
 import { StatusBar } from 'expo-status-bar';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {NavigationContainer} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Checkbox from "expo-checkbox"
+import { initializeApp } from 'firebase/app';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthChanged, signOut, onAuthStateChanged } from 'firebase/auth';
+const Stack = createNativeStackNavigator();
+const firebaseConfig = {
+  apiKey: "AIzaSyBFCWE_6eEpr2ofvkS7nl_pYsfDYKblpJA",
+  authDomain: "hollybookproject.firebaseapp.com",
+  projectId: "hollybookproject",
+  storageBucket: "hollybookproject.appspot.com",
+  messagingSenderId: "824374345054",
+  appId: "1:824374345054:web:a8122e864a1d94ed8823cf"
+};
 
-const Login = ({navigation}) => {
+const app = initializeApp(firebaseConfig);
+
+const Login = ({email, setEmail, password, setPassword, isLogin, setIsLogin, handleAuthentication}) => {
     const [isChecked, setIsChecked] = useState(false);
     return (
       <View style={styles.container}>
@@ -54,12 +67,17 @@ const Login = ({navigation}) => {
         </View>
   
         <TextInput
-        placeholder="E-mail Giriniz.."
         style={[styles.input, { top: 50 }]}
+        value={email}
+        onChangeText={setEmail}
+        placeholder="E-mail Giriniz.."
+        autoCapitalize="none"
         />
         <TextInput
-        placeholder="Şifre Giriniz.."
         style={[styles.input, { top: 70 }]}
+        value={password}
+        onChangeText={setPassword}
+        placeholder="Şifre Giriniz.."
         secureTextEntry
         />
         <View
@@ -78,7 +96,9 @@ const Login = ({navigation}) => {
         />
         <Text style={styles.yazi}>Beni Hatıla</Text>
         </View>
-        <Pressable>
+        <Pressable
+      onPress={handleAuthentication}
+      >
           <Text style={styles.kayıt}>Giriş Yap</Text>
         </Pressable>
         <Text style={{
@@ -87,6 +107,73 @@ const Login = ({navigation}) => {
           top:110,
           fontSize:17,
         }}>Şifremi Unuttum</Text>
+      </View>
+    )
+  }
+  const Logined = ({ user, handleAuthentication, navigation }) => {
+    return (
+      <View>
+        <Pressable>
+          <Text
+          style={{
+            alignItems:'center',
+            top:100
+          }}
+           onPress={() => navigation.navigate("Profil")}>Giriş Başarılı! Tıklayınız..</Text>
+           <Text>Hocam bu sayfadaki butona bastıktan sonra hazırladığım profil sayfasının açılması lazım ama bir türlü açılmadı.</Text>
+        </Pressable>
+      </View>
+    )
+  }
+  const App = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [user, setUser] = useState(null);
+    const [isLogin, setIsLogin] = useState(true);
+  
+    const auth = getAuth(app);
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setUser(user);
+      });
+  
+      return () => unsubscribe();
+    }, [auth]);
+  
+    const handleAuthentication = async () => {
+      try {
+        if (user) {
+          console.log("başarıyla giriş yapıldı");
+          await signOut(auth);
+        } else {
+          if (isLogin) {
+            await signInWithEmailAndPassword(auth, email, password);
+            console.log('başarıyla giriş yapıldı');
+          } else {
+            // Yeni kullanıcı oluşturma
+            await createUserWithEmailAndPassword(auth, email, password);
+            console.log('başarıyla yeni kullanıcı oluşturuldu');
+          }
+        }
+      } catch (error) {
+        console.error('Authentication error: ', error.message);
+      }
+    }; 
+    return (
+      <View style={styles.container}>
+        {user ? (
+          <Logined user={user} handleAuthentication={handleAuthentication}/>
+        ) : (
+          <Login
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            isLogin={isLogin}
+            setIsLogin={setIsLogin}
+            handleAuthentication={handleAuthentication}
+          />
+        )}
       </View>
     )
   }
@@ -124,4 +211,4 @@ const Login = ({navigation}) => {
     }
   })
   
-  export default Login
+  export default App
