@@ -9,6 +9,8 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthChanged, signOut } from 'firebase/auth';
 import { useState } from 'react';
 import Profil from './src/screens/Profil';
+import Movie from './src/screens/Movie';
+import Kitap from './src/screens/Kitap';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,16 +28,18 @@ const app = initializeApp(firebaseConfig);
 const App = ({navigation}) => {
   
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName='Welcome' 
-        screenOptions={{headerShown:false}}>
-        <Stack.Screen name='Welcome' component={Welcome}/>
-        <Stack.Screen name='Signup' component={Signup}/>
-        <Stack.Screen name='Login' component={Login}/>
-        <Stack.Screen name='Profil' component={Profil}/>
-      </Stack.Navigator>
+    // <NavigationContainer>
+    //   <Stack.Navigator initialRouteName='Welcome' 
+    //     screenOptions={{headerShown:false}}>
+    //     <Stack.Screen name='Welcome' component={Welcome}/>
+    //     <Stack.Screen name='Signup' component={Signup}/>
+    //     <Stack.Screen name='Login' component={Login}/>
+    //     <Stack.Screen name='Profil' component={Profil}/>
+    //   </Stack.Navigator>
+    // </NavigationContainer>
 
-    </NavigationContainer>
+    <Kitap/>
+
 
   )
 }
