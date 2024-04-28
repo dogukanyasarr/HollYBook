@@ -11,6 +11,7 @@ import { useState } from 'react';
 import Profil from './src/screens/Profil';
 import Movie from './src/screens/Movie';
 import Kitap from './src/screens/Kitap';
+import Series from './src/screens/Series';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,18 +29,18 @@ const app = initializeApp(firebaseConfig);
 const App = ({navigation}) => {
   
   return (
-    // <NavigationContainer>
-    //   <Stack.Navigator initialRouteName='Welcome' 
-    //     screenOptions={{headerShown:false}}>
-    //     <Stack.Screen name='Welcome' component={Welcome}/>
-    //     <Stack.Screen name='Signup' component={Signup}/>
-    //     <Stack.Screen name='Login' component={Login}/>
-    //     <Stack.Screen name='Profil' component={Profil}/>
-    //   </Stack.Navigator>
-    // </NavigationContainer>
-
-    <Kitap/>
-
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='Welcome' 
+        screenOptions={{headerShown:false}}>
+        <Stack.Screen name='Welcome' component={Welcome}/>
+        <Stack.Screen name='Signup' component={Signup}/>
+        <Stack.Screen name='Login' component={Login}/>
+        <Stack.Screen name='Profil' component={Profil}/>
+        <Stack.Screen name='Movie' component={Movie}/>
+        <Stack.Screen name='Kitap' component={Kitap}/>
+        <Stack.Screen name='Series' component={Series}/>
+      </Stack.Navigator>
+    </NavigationContainer>
 
   )
 }

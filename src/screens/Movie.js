@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Movie = () => {
   const [movies, setMovies] = useState([]);
@@ -13,7 +15,7 @@ const Movie = () => {
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
-        <Image 
+      <Image 
         source={{ uri: item.thumbnail }} 
         style={styles.thumbnail}
         resizeMode="contain"
@@ -26,48 +28,33 @@ const Movie = () => {
       <Text style={styles.text}>{item.cast.join(', ')}</Text>
       <Text style={styles.subtitle}>Türler:</Text>
       <Text style={styles.text}>{item.genres.join(', ')}</Text>
-
     </View>
   );
 
   return (
     <View style={styles.container}>
-        
-        <View>
-            <Text 
-            style={{
-                marginTop:45,
-                backgroundColor: '#931621',
-                letterSpacing:6,
-                color:'white',
-                textAlign:'center',
-                fontSize:30,
-                padding:20,
-                borderWidth: 2,
-                borderColor:'white',
-                borderRadius:50,
-                fontWeight:'bold'
-                }}>Filmler</Text>
-            <Image
-            source={require('./images/film.jpg')}
-            style={{
-                width: 65,
-                height: 65,
-                borderRadius: 20,
-                marginLeft: 50,
-                marginTop: 55,
-                position:"absolute",
-                
-              }}
-            />
-        </View>
+      <View>
+        <Text 
+          style={{
+              marginTop:45,
+              backgroundColor: '#931621',
+              letterSpacing:6,
+              color:'white',
+              textAlign:'center',
+              fontSize:30,
+              padding:20,
+              borderWidth: 2,
+              borderColor:'white',
+              borderRadius:50,
+              fontWeight:'bold'
+              }}>Film Listesi</Text>
+      </View>
       <FlatList
         data={movies}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         style={styles.flatList}
       />
-      
     </View>
   );
 };
@@ -75,7 +62,7 @@ const Movie = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:'#931621', // Burayı değiştirdim
+    backgroundColor:'#931621',
   },
   flatList: {
     marginTop:10,
@@ -88,10 +75,9 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginLeft:'5%',
     marginRight:'5%',
-    borderWidth: 2, // Çerçeve kalınlığı
-    borderColor: 'white', // Çerçeve rengi
-    borderRadius: 10, // Kenar yuvarlaklığı
-    
+    borderWidth: 2,
+    borderColor: 'white',
+    borderRadius: 10,
 },
   title: {
     color: '#931621',

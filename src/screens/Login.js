@@ -40,8 +40,8 @@ const Login = ({email, setEmail, password, setPassword, isLogin, setIsLogin, han
               width: 80,
               height: 80,
               borderRadius: 20,
-              marginLeft: 5, // Left margin added
-              marginTop: 90, // Top margin added
+              marginLeft: 5, 
+              marginTop: 90,
             }}
           />
           <Image
@@ -50,8 +50,8 @@ const Login = ({email, setEmail, password, setPassword, isLogin, setIsLogin, han
               width: 80,
               height: 80,
               borderRadius: 20,
-              marginLeft: 20, // Left margin added
-              marginTop: 90, // Top margin added
+              marginLeft: 20, 
+              marginTop: 90,
             }}
           />
           <Image
@@ -60,8 +60,8 @@ const Login = ({email, setEmail, password, setPassword, isLogin, setIsLogin, han
               width: 80,
               height: 80,
               borderRadius: 20,
-              marginLeft: 20, // Left margin added
-              marginTop: 90, // Top margin added
+              marginLeft: 20,
+              marginTop: 90,
             }}
           />
         </View>

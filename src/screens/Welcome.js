@@ -74,9 +74,24 @@ const Welcome = ({navigation}) => {
         />
           <View>
             <Text style={styles.baslik}>HOLLYBOOK</Text>
-            <Text style={styles.film}>Film,</Text>
-            <Text style={styles.dizi}>Dizi,</Text>
-            <Text style={styles.kitap}>Kitap.</Text>
+            
+            <Pressable style={styles.buttonFilm}
+            onPress={()=> navigation.navigate("Movie")}
+            >
+              <Text style={{color:'white', fontWeight:'bold', fontSize:20}}>Filmler!</Text>
+            </Pressable>
+            
+            <Pressable style={styles.buttonKitap}
+            onPress={()=> navigation.navigate("Kitap")}
+            >
+              <Text style={{color:'white', fontWeight:'bold', fontSize:20}}>Kitaplar!</Text>
+            </Pressable>
+            
+            <Pressable style={styles.buttonDizi}
+            onPress={()=> navigation.navigate("Series")}
+            >
+              <Text style={{color:'white', fontWeight:'bold', fontSize:20}}>Diziler!</Text>
+            </Pressable>
 
             <Pressable style={styles.button}
             onPress={()=> navigation.navigate("Login")}
@@ -102,36 +117,49 @@ const styles = StyleSheet.create({
       backgroundColor: '#BF3131',
     },
     baslik:{
-      top:350,
+      top:325,
       textAlign:'left',
       marginLeft:15,
       color:'white',
       fontSize:50,
       fontWeight: 'bold'
     },
-    film:{
-      top:350,
-      textAlign:'left',
-      marginLeft:15,
-      color:'white',
+    buttonFilm:{
+      alignItems:'center',
+      justifyContent:'center',
       fontSize:40,
-      fontWeight: 'bold'
+      width:130,
+      height:50,
+      borderRadius:10,
+      marginLeft:'5%',
+      top:335,
+      backgroundColor:'rgba(253, 166, 50, 0.7)',
+      color:'white',
     },
-    dizi:{
-      top:350,
-      textAlign:'left',
-      marginLeft:15,
-      color:'white',
+    buttonKitap:{
+      alignItems:'center',
+      justifyContent:'center',
       fontSize:40,
-      fontWeight: 'bold'
+      width:130,
+      height:50,
+      borderRadius:10,
+      marginLeft:'5%',
+      top:350,
+      backgroundColor:'rgba(253, 166, 50, 0.7)',
+      color:'white',
+
     },
-    kitap:{
-      top:350,
-      textAlign:'left',
-      marginLeft:15,
-      color:'white',
+    buttonDizi:{
+      alignItems:'center',
+      justifyContent:'center',
       fontSize:40,
-      fontWeight: 'bold'
+      width:130,
+      height:50,
+      borderRadius:10,
+      marginLeft:'5%',
+      top:365,
+      backgroundColor:'rgba(253, 166, 50, 0.7)',
+      color:'white',
     },
     button:{
       top:350,
