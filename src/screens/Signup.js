@@ -7,13 +7,10 @@ import Checkbox from "expo-checkbox"
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthChanged, signOut, onAuthStateChanged } from 'firebase/auth';
 import { get } from "firebase/database";
-
-
-
-const Signup = ({email, setEmail, password, setPassword, isLogin, setIsLogin, handleAuthentication}) => {
+const Signup = ({ email, setEmail, password, setPassword, isLogin, handleAuthentication }) => {
 
   const [isChecked, setIsChecked] = useState(false);
-  
+
   return (
     <View style={styles.container}>
       <Image
@@ -27,50 +24,18 @@ const Signup = ({email, setEmail, password, setPassword, isLogin, setIsLogin, ha
           top: 70,
         }}
       />
-      <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
-        <Image
-          source={require('./images/kitap.jpg')}
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: 20,
-            marginLeft: 5,
-            marginTop: 90,
-          }}
-        />
-        <Image
-          source={require('./images/film.jpg')}
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: 20,
-            marginLeft: 20,
-            marginTop: 90,
-          }}
-        />
-        <Image
-          source={require('./images/dizi.jpg')}
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: 20,
-            marginLeft: 20,
-            marginTop: 90,
-          }}
-        />
-      </View>
       <Text style={styles.hesap}>{isLogin ? 'Hesap Oluştur' : 'Giriş Yap'}</Text>
       <Text style={styles.metin}>Aramıza Hoş Geldin!</Text>
 
       <TextInput
-        style={[styles.input, { top: 50 }]}
+        style={[styles.input, { top: 130 }]}
         value={email}
         onChangeText={setEmail}
         placeholder="E-mail Giriniz.."
         autoCapitalize="none"
       />
       <TextInput
-        style={[styles.input, { top: 70 }]}
+        style={[styles.input, { top: 145 }]}
         value={password}
         onChangeText={setPassword}
         placeholder="Şifre Giriniz.."
@@ -81,7 +46,7 @@ const Signup = ({email, setEmail, password, setPassword, isLogin, setIsLogin, ha
         style={{
           flexDirection: 'row',
           marginVertical: 6,
-          top: 80,
+          top: 150,
           left: 30
         }}>
         <Checkbox
@@ -94,32 +59,21 @@ const Signup = ({email, setEmail, password, setPassword, isLogin, setIsLogin, ha
       </View>
 
       <Pressable
-      onPress={handleAuthentication}
+        onPress={handleAuthentication}
       >
-          <Text style={styles.kayıt}>Hesap Oluştur</Text>
-        </Pressable>
-    </View>
-  )
-}
-
-const Signedup = ({ user, handleAuthentication }) => {
-  return (
-    <View>
-      <Text>Welcome</Text>
-      <Text>{user.email}</Text>
-      <Pressable>
-        <Text onPress={handleAuthentication}>Çıkış Yap</Text>
+        <Text style={styles.kayıt}>Hesap Oluştur</Text>
       </Pressable>
     </View>
   )
 }
+
 const App = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [isLogin, setIsLogin] = useState(true);
 
-  const auth = getAuth(app);
+  const auth = getAuth();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
@@ -141,12 +95,12 @@ const App = () => {
       console.error('Authentication error: ', error.message);
     }
   };
-  
+
 
   return (
     <View style={styles.container}>
       {user ? (
-        <Signedup user={user} handleAuthentication={handleAuthentication}/>
+        <Signedup handleAuthentication={handleAuthentication} />
       ) : (
         <Signup
           email={email}
@@ -163,54 +117,54 @@ const App = () => {
 }
 
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
-    backgroundColor:'#BF3131'
+  container: {
+    flex: 1,
+    backgroundColor: '#931621'
   },
-  hesap:{
-    textAlign:'left',
-    left:'3%',
-    color:'white',
-    fontWeight:'bold',
-    fontSize:30,
-    top:25,
+  hesap: {
+    textAlign: 'left',
+    left: '3%',
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 30,
+    top: 100,
   },
-  metin:{
-    textAlign:'left',
-    left:'3%',
-    color:'white',
-    fontSize:20,
-    top:30,
+  metin: {
+    textAlign: 'left',
+    left: '3%',
+    color: 'white',
+    fontSize: 20,
+    top: 105,
   },
-  input:{
-    color:'white',
-    width:330,
-    height:50,
-    backgroundColor:'rgba(253, 166, 50, 0.7)',
-    alignSelf:'center',
-    borderRadius:20,
-    paddingLeft:20
+  input: {
+    color: 'white',
+    width: 330,
+    height: 50,
+    backgroundColor: 'rgba(253, 166, 50, 0.7)',
+    alignSelf: 'center',
+    borderRadius: 20,
+    paddingLeft: 20,
   },
-  yazi:{
-    color:'white',
-    fontSize:14
+  yazi: {
+    color: 'white',
+    fontSize: 14
   },
-  kayıt:{
-    top:130,
-    width:230,
-    height:50,
-    backgroundColor:'rgba(253, 166, 50, 0.7)',
-    color:'white',
-    borderRadius:20,
-    borderWidth:0,    
-    justifyContent:'center',
-    fontSize:19,
-    fontWeight:'bold',
-    textAlign:'center',
-    alignSelf:'center',
-    paddingTop:10   
+  kayıt: {
+    top: 170,
+    width: 230,
+    height: 50,
+    backgroundColor: 'rgba(253, 166, 50, 0.7)',
+    color: 'white',
+    borderRadius: 20,
+    borderWidth: 0,
+    justifyContent: 'center',
+    fontSize: 19,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    alignSelf: 'center',
+    paddingTop: 10
   }
-  
+
 })
 
-export default App
+export default App;

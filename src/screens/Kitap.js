@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View, Text, FlatList, StyleSheet, Image, TextInput } from 'react-native';
 
 const Kitap = () => {
   const [bookData, setBookData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetch('https://raw.githubusercontent.com/dogukanyasarr/HollyBook/master/data/Kitap.json')
@@ -12,6 +11,10 @@ const Kitap = () => {
       .then(data => setBookData(data))
       .catch(error => console.error(error));
   }, []);
+
+  const filteredBooks = bookData.filter(book =>
+    book.başlık.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const renderBookItem = ({ item }) => (
     <View style={styles.bookContainer}>
@@ -41,8 +44,14 @@ const Kitap = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Kitap Listesi</Text>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Kitap ara..."
+        onChangeText={setSearchTerm}
+        value={searchTerm}
+      />
       <FlatList
-        data={bookData}
+        data={filteredBooks}
         renderItem={renderBookItem}
         keyExtractor={(item, index) => index.toString()}
       />
@@ -57,10 +66,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#931621',
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    marginTop: 25,
+    width: 350,
     marginBottom: 10,
-    color: '#FFFFFF',
+    backgroundColor: '#931621',
+    letterSpacing: 6,
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 30,
+    padding: 20,
+    borderWidth: 2,
+    borderColor: 'white',
+    borderRadius: 50,
+    fontWeight: 'bold'
   },
   bookContainer: {
     flexDirection: 'column',
@@ -87,29 +105,24 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     color: '#931621'
-
   },
   text: {
     fontSize: 16,
     marginBottom: 5,
     color: 'white'
-
   },
-  title: {
-    marginTop: 25,
-    width: 350,
+  searchInput: {
+    height: 40,
+    borderColor: '#931621',
+    borderWidth: 1,
     marginBottom: 10,
-    backgroundColor: '#931621',
-    letterSpacing: 6,
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 30,
-    padding: 20,
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 50,
-    fontWeight: 'bold'
-  }
+    paddingHorizontal: 15,
+    backgroundColor: 'rgba(253, 166, 50, 0.4)',
+    borderRadius:20,
+    width:200,
+    alignSelf:'center',
+    textAlign:'center'
+  },
 });
 
 export default Kitap;

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Series = () => {
   const [diziData, setDiziData] = useState([]);
+  const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
     fetch('https://raw.githubusercontent.com/dogukanyasarr/HollyBook/master/data/Dizi.json')
@@ -42,11 +43,19 @@ const Series = () => {
     </View>
   );
 
+  const filteredData = diziData.filter(item => item.isim.toLowerCase().includes(searchText.toLowerCase()));
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Dizi Listesi</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Dizi Ara"
+        onChangeText={text => setSearchText(text)}
+        value={searchText}
+      />
       <FlatList
-        data={diziData}
+        data={filteredData}
         renderItem={renderDiziItem}
         keyExtractor={(item, index) => index.toString()}
       />
@@ -65,6 +74,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     color: '#FFFFFF',
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 15,
+    backgroundColor: 'rgba(253, 166, 50, 0.4)',
+    borderRadius:20,
+    width:200,
+    alignSelf:'center',
+    textAlign:'center'
   },
   diziContainer: {
     flexDirection: 'column',
@@ -99,7 +120,7 @@ const styles = StyleSheet.create({
     color: 'white'
 
   },
-  title:{
+  title: {
     marginTop: 25,
     width: 350,
     marginBottom: 10,

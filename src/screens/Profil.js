@@ -57,7 +57,8 @@ const Profil = ({navigation}) => {
         textAlign:'center',
         color:'gray',
         top:10,
-        letterSpacing:1
+        letterSpacing:1,
+        color:'rgba(253, 166, 50, 0.9)'
       }}
       >dogukanyasar.79@gmail.com</Text>
 
@@ -77,13 +78,13 @@ const Profil = ({navigation}) => {
       </View>
       <View style={{ flexDirection:'column', alignSelf: 'center',}}>
         <Image
-          source={require('./images/whitescreen.png')}
+          source={require('./images/yellowscreen.png')}
           style={{
             width:350,
             height:100,
             borderRadius: 20,
             marginBottom:20,
-            marginTop:30
+            marginTop:30          
           }}      
         />
         <Text
@@ -93,7 +94,8 @@ const Profil = ({navigation}) => {
             left:'60%',
             fontWeight:'bold',
             fontSize:20,
-            letterSpacing:4
+            letterSpacing:4,
+            color:'#931621'
           }}
 
         >Keşfet</Text>
@@ -110,7 +112,7 @@ const Profil = ({navigation}) => {
           }}
         />
         <Image
-          source={require('./images/whitescreen.png')}
+          source={require('./images/yellowscreen.png')}
           style={{
             width:350,
             height:100,
@@ -125,7 +127,8 @@ const Profil = ({navigation}) => {
             left:'60%',
             fontWeight:'bold',
             fontSize:20,
-            letterSpacing:4
+            letterSpacing:4,
+            color:'#931621'
           }}
 
         >Keşfet</Text>
@@ -142,7 +145,7 @@ const Profil = ({navigation}) => {
           }}
         />
         <Image
-          source={require('./images/whitescreen.png')}
+          source={require('./images/yellowscreen.png')}
           style={{
             width:350,
             height:100,
@@ -157,7 +160,8 @@ const Profil = ({navigation}) => {
             left:'60%',
             fontWeight:'bold',
             fontSize:20,
-            letterSpacing:4
+            letterSpacing:4,
+            color:'#931621'
           }}
 
         >Keşfet</Text>
@@ -184,7 +188,7 @@ const Profil = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#BF3131',
+      backgroundColor: '#931621',
     },
     middleSectionTextContainer:{
         flexDirection: "row",

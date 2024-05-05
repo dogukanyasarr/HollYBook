@@ -86,6 +86,149 @@
         "durum": "Devam Ediyor",
         "oyuncular": ["Itzan Escamilla", "Miguel Bernardeau", "Álvaro Rico", "Arón Piper", "Omar Ayuso", "Mina El Hammani", "Ester Expósito", "Danna Paola", "Jorge López", "Claudia Salas"],
         "url": "https://i.pinimg.com/474x/24/0e/ec/240eec659b5ce8608e5aca780f95fe7f.jpg"
+      },
+      {
+        "isim": "Arcane",
+        "platform": "Netflix",
+        "sezon": "1",
+        "baslangic": "2021",
+        "bitis": "Devam Ediyor",
+        "ulke": "ABD",
+        "durum": "Devam Ediyor",
+        "oyuncular": ["Hailee Steinfeld", "Ella Purnell", "Katie Cassidy", "JB Blanc"],
+        "url": "https://tr.web.img4.acsta.net/pictures/21/11/16/14/35/2231192.jpg"
+      },
+      {
+        "isim": "You",
+        "platform": "Netflix",
+        "sezon": "3",
+        "baslangic": "2018",
+        "bitis": "Devam Ediyor",
+        "ulke": "ABD",
+        "durum": "Devam Ediyor",
+        "oyuncular": ["Penn Badgley", "Victoria Pedretti", "Ambyr Childers", "James Scully"],
+        "url": "https://tr.web.img3.acsta.net/r_1280_720/pictures/18/07/10/11/29/0780070.jpg"
+      },
+      {
+        "isim": "Outer Banks",
+        "platform": "Netflix",
+        "sezon": "2",
+        "baslangic": "2020",
+        "bitis": "Devam Ediyor",
+        "ulke": "ABD",
+        "durum": "Devam Ediyor",
+        "oyuncular": ["Chase Stokes", "Madelyn Cline", "Madison Bailey", "Jonathan Daviss"],
+        "url": "https://tr.web.img4.acsta.net/r_1280_720/pictures/20/06/15/13/37/0583386.jpg"
+      },
+      {
+        "isim": "Stranger Things",
+        "platform": "Netflix",
+        "sezon": "4",
+        "baslangic": "2016",
+        "bitis": "Devam Ediyor",
+        "ulke": "ABD",
+        "durum": "Devam Ediyor",
+        "oyuncular": ["Millie Bobby Brown", "Finn Wolfhard", "Winona Ryder", "David Harbour"],
+        "url": "https://tr.web.img2.acsta.net/pictures/16/06/30/17/14/483244.jpg"
+      },
+      {
+        "isim": "Euphoria",
+        "platform": "Amazon",
+        "sezon": "2",
+        "baslangic": "2019",
+        "bitis": "Devam Ediyor",
+        "ulke": "ABD",
+        "durum": "Devam Ediyor",
+        "oyuncular": ["Zendaya", "Hunter Schafer", "Jacob Elordi", "Algee Smith"],
+        "url": "https://tr.web.img4.acsta.net/pictures/19/06/18/12/06/4123858.jpg"
+      },
+      {
+        "isim": "Zaman Çarkı",
+        "platform": "Amazon",
+        "sezon": "1",
+        "baslangic": "2021",
+        "bitis": "Devam Ediyor",
+        "ulke": "ABD",
+        "durum": "Devam Ediyor",
+        "oyuncular": ["Rosamund Pike", "Josha Stradowski", "Marcus Rutherford", "Zoë Robins"],
+        "url": "https://tr.web.img3.acsta.net/pictures/21/07/24/20/57/3405849.jpg"
+      },
+      {
+        "isim": "Game of Thrones",
+        "platform": "Amazon",
+        "sezon": "8",
+        "baslangic": "2011",
+        "bitis": "2019",
+        "ulke": "ABD",
+        "durum": "Final Yaptı.",
+        "oyuncular": ["Emilia Clarke", "Kit Harington", "Peter Dinklage", "Lena Headey"],
+        "url": "https://tr.web.img4.acsta.net/r_1280_720/pictures/23/05/17/14/30/0480031.jpg"
+      },
+      {
+        "isim": "The Peripheral",
+        "platform": "Amazon",
+        "sezon": "1",
+        "baslangic": "2022",
+        "bitis": "Devam Ediyor",
+        "ulke": "ABD",
+        "durum": "Devam Ediyor",
+        "oyuncular": ["Chloë Grace Moretz", "Jack Reynor", "Adelind Horan", "Toby Huss"],
+        "url": "https://tr.web.img4.acsta.net/r_1280_720/pictures/22/09/09/11/28/2882022.jpg"
+      },
+      {
+        "isim": "Bridgerton",
+        "platform": "Netflix",
+        "sezon": "1",
+        "baslangic": "2020",
+        "bitis": "Devam Ediyor",
+        "ulke": "ABD",
+        "durum": "Devam Ediyor",
+        "oyuncular": ["Phoebe Dynevor", "Regé-Jean Page", "Jonathan Bailey"],
+        "url": "https://tr.web.img4.acsta.net/r_1280_720/pictures/24/02/06/14/46/0537820.jpg"
+      },
+      {
+        "isim": "The Mist",
+        "platform": "Netflix",
+        "sezon": "1",
+        "baslangic": "2017",
+        "bitis": "İptal Edildi",
+        "ulke": "ABD",
+        "durum": "İptal Edildi",
+        "oyuncular": ["Morgan Spector", "Alyssa Sutherland", "Gus Birney"],
+        "url": "https://tr.web.img3.acsta.net/r_1280_720/pictures/17/04/26/10/59/430828.jpg"
+      },
+      {
+        "isim": "Sweet Tooth",
+        "platform": "Netflix",
+        "sezon": "1",
+        "baslangic": "2021",
+        "bitis": "Devam Ediyor",
+        "ulke": "ABD",
+        "durum": "Devam Ediyor",
+        "oyuncular": ["Christian Convery", "Nonso Anozie", "Adeel Akhtar"],
+        "url": "https://tr.web.img4.acsta.net/r_1280_720/pictures/21/05/18/08/12/2890869.jpg"
+      },
+      {
+        "isim": "Aşk 101",
+        "platform": "Netflix",
+        "sezon": "2",
+        "baslangic": "2020",
+        "bitis": "Devam Ediyor",
+        "ulke": "Türkiye",
+        "durum": "Devam Ediyor",
+        "oyuncular": ["Mert Yazıcıoğlu", "Kubilay Aka", "Alina Boz"],
+        "url": "https://tr.web.img3.acsta.net/c_310_420/pictures/20/04/06/10/25/5101172.png"
+      },
+      {
+        "isim": "Bir Başkadır",
+        "platform": "Netflix",
+        "sezon": "1",
+        "baslangic": "2020",
+        "bitis": "Devam Ediyor",
+        "ulke": "Türkiye",
+        "durum": "Devam Ediyor",
+        "oyuncular": ["Bige Önal", "Biran Damla Yılmaz", "Çağatay Ulusoy"],
+        "url": "https://tr.web.img2.acsta.net/pictures/20/11/04/10/05/2189831.jpg"
       }
   ]
   

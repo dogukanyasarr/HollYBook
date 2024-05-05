@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Movie = () => {
   const [movies, setMovies] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetch('https://raw.githubusercontent.com/prust/wikipedia-movie-data/master/movies-2020s.json')
@@ -12,6 +13,10 @@ const Movie = () => {
       .then((json) => setMovies(json))
       .catch((error) => console.error(error));
   }, []);
+
+  const filteredMovies = movies.filter(movie =>
+    movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
@@ -49,8 +54,14 @@ const Movie = () => {
               fontWeight:'bold'
               }}>Film Listesi</Text>
       </View>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Film ara..."
+        onChangeText={setSearchTerm}
+        value={searchTerm}
+      />
       <FlatList
-        data={movies}
+        data={filteredMovies}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         style={styles.flatList}
@@ -78,7 +89,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'white',
     borderRadius: 10,
-},
+  },
   title: {
     color: '#931621',
     fontSize: 24,
@@ -107,6 +118,18 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'cover',
     marginVertical: 10,
+  },
+  searchInput: {
+    height: 40,
+    marginTop:12,
+    borderColor: '#931621',
+    borderWidth: 1,
+    paddingHorizontal: 15,
+    backgroundColor: 'rgba(253, 166, 50, 0.4)',
+    borderRadius:20,
+    width:200,
+    alignSelf:'center',
+    textAlign:'center'
   },
 });
 

@@ -114,7 +114,7 @@ const Welcome = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#BF3131',
+      backgroundColor: '#931621',
     },
     baslik:{
       top:325,
