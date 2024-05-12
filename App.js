@@ -12,19 +12,11 @@ import Profil from './src/screens/Profil';
 import Movie from './src/screens/Movie';
 import Kitap from './src/screens/Kitap';
 import Series from './src/screens/Series';
+import { firebase } from '@react-native-firebase/auth';
+import 'firebase/database';
 
 const Stack = createNativeStackNavigator();
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBFCWE_6eEpr2ofvkS7nl_pYsfDYKblpJA",
-  authDomain: "hollybookproject.firebaseapp.com",
-  projectId: "hollybookproject",
-  storageBucket: "hollybookproject.appspot.com",
-  messagingSenderId: "824374345054",
-  appId: "1:824374345054:web:a8122e864a1d94ed8823cf"
-};
-
-const app = initializeApp(firebaseConfig);
 
 const App = ({navigation}) => {
   
@@ -41,6 +33,8 @@ const App = ({navigation}) => {
         <Stack.Screen name='Series' component={Series}/>
       </Stack.Navigator>
     </NavigationContainer>
+
+
 
   )
 }

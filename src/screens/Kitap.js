@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TextInput } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TextInput, Button, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system';
 
 const Kitap = () => {
   const [bookData, setBookData] = useState([]);
@@ -38,8 +40,36 @@ const Kitap = () => {
         <Text style={styles.baslik}>Basım Yılı</Text>
         <Text style={styles.text}>{item.yıl}</Text>
       </View>
+      <TouchableOpacity onPress={() => saveBook(item)}>
+        <Text style={styles.saveButton}>Kaydet</Text>
+      </TouchableOpacity>
     </View>
   );
+
+  const saveBook = async (book) => {
+    try {
+      const existingBooks = await AsyncStorage.getItem('YeniKitap');
+      let newBooks = [];
+  
+      if (existingBooks) {
+        newBooks = JSON.parse(existingBooks);
+      }
+  
+      newBooks.push(book);
+      await AsyncStorage.setItem('YeniKitap', JSON.stringify(newBooks));
+      alert('Kitap başarıyla kaydedildi!');
+      
+      console.log('Eklenen kitap:', book);
+  
+      const folderPath = `${FileSystem.documentDirectory}kitaplar/`;
+      const filePath = `${folderPath}YeniKitap.json`;
+      await FileSystem.makeDirectoryAsync(folderPath, { intermediates: true });
+      await FileSystem.writeAsStringAsync(filePath, JSON.stringify(newBooks));
+
+    } catch (error) {
+      console.error('Error saving book:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -123,6 +153,14 @@ const styles = StyleSheet.create({
     alignSelf:'center',
     textAlign:'center'
   },
+  saveButton:{
+    marginTop: 10,
+    paddingBottom: 15,
+    alignSelf: 'flex-end',
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  }
 });
 
 export default Kitap;

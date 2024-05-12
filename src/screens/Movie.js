@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TextInput } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View, Text, FlatList, StyleSheet, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
+import database from '@react-native-firebase/database';
 
 const Movie = () => {
   const [movies, setMovies] = useState([]);
@@ -33,8 +32,21 @@ const Movie = () => {
       <Text style={styles.text}>{item.cast.join(', ')}</Text>
       <Text style={styles.subtitle}>Türler:</Text>
       <Text style={styles.text}>{item.genres.join(', ')}</Text>
+      <TouchableOpacity onPress={() => saveMovie(item)}>
+        <Text style={styles.saveButton}>Kaydet</Text>
+      </TouchableOpacity>
     </View>
   );
+
+  const saveMovie = async (movie) => {
+    try {
+      await database().ref('yeniFilm').push().set(movie);
+      Alert.alert('Başarılı', 'Film kaydedildi.');
+    } catch (error) {
+      console.error('Film kaydedilirken bir hata oluştu:', error);
+      Alert.alert('Hata', 'Film kaydedilirken bir hata oluştu.');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -130,6 +142,13 @@ const styles = StyleSheet.create({
     width:200,
     alignSelf:'center',
     textAlign:'center'
+  },
+  saveButton: {
+    marginTop: 10,
+    alignSelf: 'flex-end',
+    color: '#931621',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 
