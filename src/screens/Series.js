@@ -1,64 +1,97 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TextInput } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+// Series.js
+
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
+import { database } from '../screens/FirebaseDataSet'; // firebaseConfig dosyanızın yolunu ayarlayın
+import { ref, onValue, off } from 'firebase/database';
 
 const Series = () => {
-  const [diziData, setDiziData] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [series, setSeries] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredSeries, setFilteredSeries] = useState([]);
 
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/dogukanyasarr/HollyBook/master/data/Dizi.json')
-      .then(response => response.json())
-      .then(data => setDiziData(data))
-      .catch(error => console.error('Error fetching data:', error));
+    const seriesRef = ref(database, 'Dizi');
+
+    const handleData = (snapshot) => {
+      if (snapshot.exists()) {
+        const data = Object.values(snapshot.val());
+        setSeries(data);
+        setFilteredSeries(data);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log('Veri bulunamadı.');
+      }
+    };
+
+    const handleError = (error) => {
+      console.error('Veri alınırken bir hata oluştu:', error);
+      setLoading(false);
+    };
+
+    onValue(seriesRef, handleData, handleError);
+
+    // Listener'ı kaldır
+    return () => {
+      off(seriesRef, 'value', handleData);
+    };
   }, []);
 
-  const renderDiziItem = ({ item }) => (
-    <View style={styles.diziContainer}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: item.url }}
-          style={{ width: '100%', height: '100%', resizeMode: 'cover', marginTop: '30%' }}
-        />
-      </View>
-      <View style={styles.textContainer}>
-        <Text style={styles.baslik}>İsim</Text>
-        <Text style={styles.text}>{item.isim}</Text>
-        <Text style={styles.baslik}>Platform</Text>
-        <Text style={styles.text}>{item.platform}</Text>
-        <Text style={styles.baslik}>Sezon</Text>
-        <Text style={styles.text}>{item.sezon}</Text>
-        <Text style={styles.baslik}>Başlangıç</Text>
-        <Text style={styles.text}>{item.baslangic}</Text>
-        <Text style={styles.baslik}>Bitiş</Text>
-        <Text style={styles.text}>{item.bitis}</Text>
-        <Text style={styles.baslik}>Ülke</Text>
-        <Text style={styles.text}>{item.ulke}</Text>
-        <Text style={styles.baslik}>Durum</Text>
-        <Text style={styles.text}>{item.durum}</Text>
-        <Text style={styles.baslik}>Oyuncular</Text>
-        <Text style={styles.text}>{item.oyuncular.join(", ")}</Text>
-      </View>
-    </View>
-  );
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+    const filteredData = series.filter(item => 
+      item.isim.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredSeries(filteredData);
+  };
 
-  const filteredData = diziData.filter(item => item.isim.toLowerCase().includes(searchText.toLowerCase()));
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Dizi Listesi</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Dizi Ara"
-        onChangeText={text => setSearchText(text)}
-        value={searchText}
-      />
-      <FlatList
-        data={filteredData}
-        renderItem={renderDiziItem}
-        keyExtractor={(item, index) => index.toString()}
-      />
+      <View style={styles.headerContainer}>
+        <Text style={styles.header}>Diziler</Text>
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Dizi ara..."
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+      </View>
+      {filteredSeries.length === 0 ? (
+        <Text style={styles.text}>Veri bulunamadı.</Text>
+      ) : (
+        <FlatList
+          data={filteredSeries}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={styles.item}>
+              <Image
+                style={styles.image}
+                source={{ uri: item.url }}
+              />
+              <View style={styles.textContainer}>
+                <Text style={styles.title}>{item.isim}</Text>
+                <Text style={styles.details}>Platform: {item.platform}</Text>
+                <Text style={styles.details}>Sezon: {item.sezon}</Text>
+                <Text style={styles.details}>Başlangıç: {item.baslangic}</Text>
+                <Text style={styles.details}>Bitiş: {item.bitis}</Text>
+                <Text style={styles.details}>Ülke: {item.ulke}</Text>
+                <Text style={styles.details}>Durum: {item.durum}</Text>
+                <Text style={styles.details}>Oyuncular: {item.oyuncular.join(', ')}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </View>
   );
 };
@@ -66,76 +99,78 @@ const Series = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
     backgroundColor: '#931621',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#FFFFFF',
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 15,
-    backgroundColor: 'rgba(253, 166, 50, 0.4)',
-    borderRadius:20,
-    width:200,
-    alignSelf:'center',
-    textAlign:'center'
-  },
-  diziContainer: {
-    flexDirection: 'column',
+  headerContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(253, 166, 50, 0.4)',
-    borderWidth: 2,
-    borderColor: 'white',
-    marginBottom: 20,
-    borderRadius: 10,
-    overflow: 'hidden',
+    justifyContent: 'space-between',
+    marginBottom: 15,
   },
-  imageContainer: {
-    width: 100,
-    height: 150,
-    marginRight: 10,
-  },
-  textContainer: {
-    flex: 1,
-    padding: 10,
-    marginTop: '13%',
-    alignItems: 'center'
-  },
-  baslik: {
+  header: {
+    fontSize: 24,
     fontWeight: 'bold',
-    fontSize: 18,
-    color: '#931621'
-
+    color: '#fff',
+    marginTop:30,
+    paddingBottom:10,
+    marginBottom: 15,
+    textAlign: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor:'white'
+  },
+  searchBar: {
+    backgroundColor: '#fff',
+    padding: 6,
+    top:5,
+    marginRight:15,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    fontSize: 14,
+    height: 30,
+    width:250,
   },
   text: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: 'white'
-
+    fontSize: 18,
+    alignSelf: 'center',
+    marginTop: 20,
+    color: '#fff',
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 10,
+    marginBottom: 10,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  image: {
+    width: 100,
+    height: 150,
+    borderRadius: 10,
+  },
+  textContainer: {
+    marginLeft: 10,
+    flex: 1,
   },
   title: {
-    marginTop: 25,
-    width: 350,
-    marginBottom: 10,
-    backgroundColor: '#931621',
-    letterSpacing: 6,
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 30,
-    padding: 20,
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 50,
-    fontWeight: 'bold'
-
-  }
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  details: {
+    fontSize: 14,
+    marginBottom: 3,
+    color: '#666',
+  },
 });
 
 export default Series;

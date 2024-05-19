@@ -1,90 +1,98 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TextInput, Button, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from 'expo-file-system';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
+import { database } from '../screens/FirebaseDataSet'; // firebaseConfig dosyanızın yolunu ayarlayın
+import { ref, onValue, off } from 'firebase/database';
 
 const Kitap = () => {
-  const [bookData, setBookData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [kitaplar, setKitaplar] = useState([]);
+  const [search, setSearch] = useState('');
+  const [filteredKitaplar, setFilteredKitaplar] = useState([]);
 
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/dogukanyasarr/HollyBook/master/data/Kitap.json')
-      .then(response => response.json())
-      .then(data => setBookData(data))
-      .catch(error => console.error(error));
+    const kitapRef = ref(database, 'Kitap');
+
+    const handleData = (snapshot) => {
+      if (snapshot.exists()) {
+        const kitapList = Object.values(snapshot.val());
+        setKitaplar(kitapList);
+        setFilteredKitaplar(kitapList);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log('Veri bulunamadı.');
+      }
+    };
+
+    const handleError = (error) => {
+      console.error('Veri alınırken bir hata oluştu:', error);
+      setLoading(false);
+    };
+
+    onValue(kitapRef, handleData, handleError);
+
+    // Listener'ı kaldır
+    return () => {
+      off(kitapRef, 'value', handleData);
+    };
   }, []);
 
-  const filteredBooks = bookData.filter(book =>
-    book.başlık.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const renderBookItem = ({ item }) => (
-    <View style={styles.bookContainer}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: item.resimBağlantısı }}
-          style={{ width: '100%', height: '100%', resizeMode: 'cover', marginTop: '30%' }}
-        />
-      </View>
-      <View style={styles.textContainer}>
-        <Text style={styles.baslik}>Başlık</Text>
-        <Text style={styles.text}>{item.başlık}</Text>
-        <Text style={styles.baslik}>Yazar</Text>
-        <Text style={styles.text}>{item.yazar}</Text>
-        <Text style={styles.baslik}>Dil</Text>
-        <Text style={styles.text}>{item.dil}</Text>
-        <Text style={styles.baslik}>Kategori</Text>
-        <Text style={styles.text}>{item.kategori}</Text>
-        <Text style={styles.baslik}>Sayfa</Text>
-        <Text style={styles.text}>{item.sayfa}</Text>
-        <Text style={styles.baslik}>Basım Yılı</Text>
-        <Text style={styles.text}>{item.yıl}</Text>
-      </View>
-      <TouchableOpacity onPress={() => saveBook(item)}>
-        <Text style={styles.saveButton}>Kaydet</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  const saveBook = async (book) => {
-    try {
-      const existingBooks = await AsyncStorage.getItem('YeniKitap');
-      let newBooks = [];
-  
-      if (existingBooks) {
-        newBooks = JSON.parse(existingBooks);
-      }
-  
-      newBooks.push(book);
-      await AsyncStorage.setItem('YeniKitap', JSON.stringify(newBooks));
-      alert('Kitap başarıyla kaydedildi!');
-      
-      console.log('Eklenen kitap:', book);
-  
-      const folderPath = `${FileSystem.documentDirectory}kitaplar/`;
-      const filePath = `${folderPath}YeniKitap.json`;
-      await FileSystem.makeDirectoryAsync(folderPath, { intermediates: true });
-      await FileSystem.writeAsStringAsync(filePath, JSON.stringify(newBooks));
-
-    } catch (error) {
-      console.error('Error saving book:', error);
+  const handleSearch = (text) => {
+    setSearch(text);
+    if (text === '') {
+      setFilteredKitaplar(kitaplar);
+    } else {
+      const filtered = kitaplar.filter((kitap) =>
+        kitap.başlık.toLowerCase().includes(text.toLowerCase()) ||
+        kitap.yazar.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredKitaplar(filtered);
     }
   };
 
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Kitap Listesi</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Kitap ara..."
-        onChangeText={setSearchTerm}
-        value={searchTerm}
-      />
-      <FlatList
-        data={filteredBooks}
-        renderItem={renderBookItem}
-        keyExtractor={(item, index) => index.toString()}
-      />
+      <View style={styles.headerContainer}>
+        <Text style={styles.header}>Kitaplar</Text>
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Ara..."
+          value={search}
+          onChangeText={handleSearch}
+        />
+      </View>
+      {filteredKitaplar.length === 0 ? (
+        <Text style={styles.text}>Veri bulunamadı.</Text>
+      ) : (
+        <FlatList
+          data={filteredKitaplar}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={styles.item}>
+              <Image
+                style={styles.image}
+                source={{ uri: item.resimBağlantısı }}
+              />
+              <View style={styles.textContainer}>
+                <Text style={styles.title}>{item.başlık}</Text>
+                <Text style={styles.author}>Yazar: {item.yazar}</Text>
+                <Text style={styles.details}>Dil: {item.dil}</Text>
+                <Text style={styles.details}>Kategori: {item.kategori}</Text>
+                <Text style={styles.details}>Sayfa Sayısı: {item.sayfa}</Text>
+                <Text style={styles.details}>Yıl: {item.yıl}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </View>
   );
 };
@@ -92,75 +100,83 @@ const Kitap = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#931621',
-  },
-  title: {
-    marginTop: 25,
-    width: 350,
-    marginBottom: 10,
-    backgroundColor: '#931621',
-    letterSpacing: 6,
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 30,
-    padding: 20,
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 50,
-    fontWeight: 'bold'
-  },
-  bookContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    backgroundColor: 'rgba(253, 166, 50, 0.4)',
-    borderWidth: 2,
-    borderColor: 'white',
-    marginBottom: 20,
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  imageContainer: {
-    width: 100,
-    height: 150,
-    marginRight: 10,
-  },
-  textContainer: {
-    flex: 1,
     padding: 10,
-    marginTop: '13%',
-    alignItems: 'center'
+    backgroundColor: '#931621',
   },
-  baslik: {
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+  },
+  header: {
+    fontSize: 24,
     fontWeight: 'bold',
-    fontSize: 18,
-    color: '#931621'
+    color: '#fff',
+    marginTop:30,
+    paddingBottom:10,
+    marginBottom: 15,
+    textAlign: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor:'white'
+  },
+  searchBar: {
+    backgroundColor: '#fff',
+    padding: 6,
+    top:5,
+    marginRight:15,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    fontSize: 14,
+    height: 30,
+    width:250,
   },
   text: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: 'white'
+    fontSize: 18,
+    alignSelf: 'center',
+    marginTop: 20,
+    color: '#fff',
   },
-  searchInput: {
-    height: 40,
-    borderColor: '#931621',
-    borderWidth: 1,
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 10,
     marginBottom: 10,
-    paddingHorizontal: 15,
-    backgroundColor: 'rgba(253, 166, 50, 0.4)',
-    borderRadius:20,
-    width:200,
-    alignSelf:'center',
-    textAlign:'center'
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  saveButton:{
-    marginTop: 10,
-    paddingBottom: 15,
-    alignSelf: 'flex-end',
-    color: 'white',
+  image: {
+    width: 100,
+    height: 150,
+    borderRadius: 10,
+  },
+  textContainer: {
+    marginLeft: 10,
+    flex: 1,
+  },
+  title: {
+    fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  author: {
     fontSize: 16,
-  }
+    marginBottom: 3,
+    color: '#666',
+  },
+  details: {
+    fontSize: 14,
+    marginBottom: 3,
+    color: '#666',
+  },
 });
 
 export default Kitap;

@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput, Linking } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import { database } from '../screens/FirebaseDataSet'; // firebaseConfig dosyanızın yolunu ayarlayın
 import { ref, onValue, off } from 'firebase/database';
 
-const Movie = () => {
+const KayitFilm = () => {
   const [loading, setLoading] = useState(true);
-  const [movies, setMovies] = useState([]);
+  const [filmler, setFilmler] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [filteredFilmler, setFilteredFilmler] = useState([]);
 
   useEffect(() => {
-    const moviesRef = ref(database, 'Movie');
+    const filmlerRef = ref(database, 'yeniFilm');
 
     const handleData = (snapshot) => {
       if (snapshot.exists()) {
         const data = Object.values(snapshot.val());
-        setMovies(data);
-        setFilteredMovies(data);
+        setFilmler(data);
+        setFilteredFilmler(data);
         setLoading(false);
       } else {
         setLoading(false);
@@ -29,21 +29,25 @@ const Movie = () => {
       setLoading(false);
     };
 
-    onValue(moviesRef, handleData, handleError);
+    onValue(filmlerRef, handleData, handleError);
 
     // Listener'ı kaldır
     return () => {
-      off(moviesRef, 'value', handleData);
+      off(filmlerRef, 'value', handleData);
     };
   }, []);
 
-  const handleSearch = (text) => {
-    setSearchQuery(text);
-    const filteredData = movies.filter(item => 
-      item.title.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredMovies(filteredData);
-  };
+  useEffect(() => {
+    if (searchQuery === '') {
+      setFilteredFilmler(filmler);
+    } else {
+      setFilteredFilmler(
+        filmler.filter(film => 
+          film.başlık.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+    }
+  }, [searchQuery, filmler]);
 
   if (loading) {
     return (
@@ -56,28 +60,29 @@ const Movie = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Filmler</Text>
+        <Text style={styles.header}>Filmlerim</Text>
         <TextInput
           style={styles.searchBar}
-          placeholder="Film ara..."
+          placeholder="Ara..."
           value={searchQuery}
-          onChangeText={handleSearch}
+          onChangeText={setSearchQuery}
         />
       </View>
-      {filteredMovies.length === 0 ? (
+
+      {filteredFilmler.length === 0 ? (
         <Text style={styles.text}>Veri bulunamadı.</Text>
       ) : (
         <FlatList
-          data={filteredMovies}
+          data={filteredFilmler}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.item} onPress={() => Linking.openURL(`https://en.wikipedia.org/wiki/${item.href}`)}>
+            <TouchableOpacity style={styles.item}>
               <Image
                 style={styles.image}
                 source={{ uri: item.thumbnail }}
               />
               <View style={styles.textContainer}>
-                <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.title}>{item.title}</Text>
                 <Text style={styles.details}>Yıl: {item.year}</Text>
                 <Text style={styles.details}>Tür: {item.genres.join(', ')}</Text>
                 <Text style={styles.details}>Oyuncular: {item.cast.join(', ')}</Text>
@@ -98,31 +103,32 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 15,
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 3,
+    borderBottomWidth: 1,
+    borderBottomColor: '#fff',
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
     marginTop:30,
-    paddingBottom:10,
     marginBottom: 15,
     textAlign: 'center',
-    borderBottomWidth: 1,
     borderBottomColor:'white'
   },
   searchBar: {
     backgroundColor: '#fff',
     padding: 6,
-    top:5,
+    top:8,
     marginRight:15,
     paddingHorizontal: 10,
     borderRadius: 10,
     fontSize: 14,
     height: 30,
-    width:250,
+    width:215,
   },
   text: {
     fontSize: 18,
@@ -160,6 +166,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
   },
+  author: {
+    fontSize: 16,
+    marginBottom: 3,
+    color: '#666',
+  },
   details: {
     fontSize: 14,
     marginBottom: 3,
@@ -167,4 +178,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Movie;
+export default KayitFilm;

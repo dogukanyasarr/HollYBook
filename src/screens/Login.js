@@ -111,7 +111,7 @@ const Logined = ({ user, handleAuthentication, navigation }) => {
         title="Çıkış Yap"
         onPress={() => {
           handleAuthentication();
-          navigation.navigate("Login");
+          navigation.navigate("Profi");
         }}
       />
       <Pressable

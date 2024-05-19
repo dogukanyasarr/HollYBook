@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput, Linking } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import { database } from '../screens/FirebaseDataSet'; // firebaseConfig dosyanızın yolunu ayarlayın
 import { ref, onValue, off } from 'firebase/database';
 
-const Movie = () => {
+const KayitDizi = () => {
   const [loading, setLoading] = useState(true);
-  const [movies, setMovies] = useState([]);
+  const [diziler, setDiziler] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [filteredDiziler, setFilteredDiziler] = useState([]);
 
   useEffect(() => {
-    const moviesRef = ref(database, 'Movie');
+    const dizilerRef = ref(database, 'yeniDiziler');
 
     const handleData = (snapshot) => {
       if (snapshot.exists()) {
         const data = Object.values(snapshot.val());
-        setMovies(data);
-        setFilteredMovies(data);
+        setDiziler(data);
+        setFilteredDiziler(data);
         setLoading(false);
       } else {
         setLoading(false);
@@ -29,21 +29,25 @@ const Movie = () => {
       setLoading(false);
     };
 
-    onValue(moviesRef, handleData, handleError);
+    onValue(dizilerRef, handleData, handleError);
 
     // Listener'ı kaldır
     return () => {
-      off(moviesRef, 'value', handleData);
+      off(dizilerRef, 'value', handleData);
     };
   }, []);
 
-  const handleSearch = (text) => {
-    setSearchQuery(text);
-    const filteredData = movies.filter(item => 
-      item.title.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredMovies(filteredData);
-  };
+  useEffect(() => {
+    if (searchQuery === '') {
+      setFilteredDiziler(diziler);
+    } else {
+      setFilteredDiziler(
+        diziler.filter(dizi => 
+          dizi.başlık.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+    }
+  }, [searchQuery, diziler]);
 
   if (loading) {
     return (
@@ -56,31 +60,36 @@ const Movie = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Filmler</Text>
+        <Text style={styles.header}>Dizilerim</Text>
         <TextInput
           style={styles.searchBar}
-          placeholder="Film ara..."
+          placeholder="Ara..."
           value={searchQuery}
-          onChangeText={handleSearch}
+          onChangeText={setSearchQuery}
         />
       </View>
-      {filteredMovies.length === 0 ? (
+
+      {filteredDiziler.length === 0 ? (
         <Text style={styles.text}>Veri bulunamadı.</Text>
       ) : (
         <FlatList
-          data={filteredMovies}
+          data={filteredDiziler}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.item} onPress={() => Linking.openURL(`https://en.wikipedia.org/wiki/${item.href}`)}>
+            <TouchableOpacity style={styles.item}>
               <Image
                 style={styles.image}
-                source={{ uri: item.thumbnail }}
+                source={{ uri: item.url }}
               />
               <View style={styles.textContainer}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.details}>Yıl: {item.year}</Text>
-                <Text style={styles.details}>Tür: {item.genres.join(', ')}</Text>
-                <Text style={styles.details}>Oyuncular: {item.cast.join(', ')}</Text>
+                <Text style={styles.title}>{item.isim}</Text>
+                <Text style={styles.details}>Platform: {item.platform}</Text>
+                <Text style={styles.details}>Sezon: {item.sezon}</Text>
+                <Text style={styles.details}>Başlangıç: {item.baslangic}</Text>
+                <Text style={styles.details}>Bitiş: {item.bitis}</Text>
+                <Text style={styles.details}>Ülke: {item.ulke}</Text>
+                <Text style={styles.details}>Durum: {item.durum}</Text>
+                <Text style={styles.details}>Oyuncular: {item.oyuncular.join(', ')}</Text>
               </View>
             </TouchableOpacity>
           )}
@@ -98,31 +107,32 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 15,
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 3,
+    borderBottomWidth: 1,
+    borderBottomColor: '#fff',
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
     marginTop:30,
-    paddingBottom:10,
     marginBottom: 15,
     textAlign: 'center',
-    borderBottomWidth: 1,
     borderBottomColor:'white'
   },
   searchBar: {
     backgroundColor: '#fff',
     padding: 6,
-    top:5,
+    top:8,
     marginRight:15,
     paddingHorizontal: 10,
     borderRadius: 10,
     fontSize: 14,
     height: 30,
-    width:250,
+    width:215,
   },
   text: {
     fontSize: 18,
@@ -160,6 +170,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
   },
+  author: {
+    fontSize: 16,
+    marginBottom: 3,
+    color: '#666',
+  },
   details: {
     fontSize: 14,
     marginBottom: 3,
@@ -167,4 +182,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Movie;
+export default KayitDizi;
