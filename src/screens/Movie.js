@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput, Linking } from 'react-native';
 import { database } from '../screens/FirebaseDataSet'; // firebaseConfig dosyanızın yolunu ayarlayın
-import { ref, onValue, off } from 'firebase/database';
+import { ref, onValue, off, push } from 'firebase/database';
 
 const Movie = () => {
   const [loading, setLoading] = useState(true);
@@ -45,6 +45,17 @@ const Movie = () => {
     setFilteredMovies(filteredData);
   };
 
+  const handleSave = (movie) => {
+    const newMovieRef = ref(database, 'yeniFilm');
+    push(newMovieRef, movie)
+      .then(() => {
+        console.log('Film başarıyla kaydedildi.');
+      })
+      .catch((error) => {
+        console.error('Film kaydedilirken bir hata oluştu:', error);
+      });
+  };
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -71,18 +82,23 @@ const Movie = () => {
           data={filteredMovies}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.item} onPress={() => Linking.openURL(`https://en.wikipedia.org/wiki/${item.href}`)}>
-              <Image
-                style={styles.image}
-                source={{ uri: item.thumbnail }}
-              />
+            <View style={styles.item}>
+              <TouchableOpacity onPress={() => Linking.openURL(`https://en.wikipedia.org/wiki/${item.href}`)}>
+                <Image
+                  style={styles.image}
+                  source={{ uri: item.thumbnail }}
+                />
+              </TouchableOpacity>
               <View style={styles.textContainer}>
                 <Text style={styles.title}>{item.title}</Text>
                 <Text style={styles.details}>Yıl: {item.year}</Text>
-                <Text style={styles.details}>Tür: {item.genres.join(', ')}</Text>
-                <Text style={styles.details}>Oyuncular: {item.cast.join(', ')}</Text>
+                <Text style={styles.details}>Tür: {item.genres ? item.genres.join(', ') : 'Bilinmiyor'}</Text>
+                <Text style={styles.details}>Oyuncular: {item.cast ? item.cast.join(', ') : 'Bilinmiyor'}</Text>
+                <TouchableOpacity style={styles.saveButton} onPress={() => handleSave(item)}>
+                  <Text style={styles.saveButtonText}>Kaydet</Text>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
+            </View>
           )}
         />
       )}
@@ -106,23 +122,23 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
-    marginTop:30,
-    paddingBottom:10,
+    marginTop: 30,
+    paddingBottom: 10,
     marginBottom: 15,
     textAlign: 'center',
     borderBottomWidth: 1,
-    borderBottomColor:'white'
+    borderBottomColor: 'white',
   },
   searchBar: {
     backgroundColor: '#fff',
     padding: 6,
-    top:5,
-    marginRight:15,
+    top: 5,
+    marginRight: 15,
     paddingHorizontal: 10,
     borderRadius: 10,
     fontSize: 14,
     height: 30,
-    width:250,
+    width: 250,
   },
   text: {
     fontSize: 18,
@@ -164,6 +180,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 3,
     color: '#666',
+  },
+  saveButton: {
+    marginTop: 10,
+    backgroundColor: '#931621',
+    padding: 10,
+    borderRadius: 5,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

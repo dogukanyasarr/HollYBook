@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import { database } from '../screens/FirebaseDataSet'; // firebaseConfig dosyanızın yolunu ayarlayın
-import { ref, onValue, off } from 'firebase/database';
+import { ref, onValue, off, push } from 'firebase/database';
 
 const Kitap = () => {
   const [loading, setLoading] = useState(true);
@@ -50,6 +50,17 @@ const Kitap = () => {
     }
   };
 
+  const handleSave = (kitap) => {
+    const newKitapRef = ref(database, 'yeniKitap');
+    push(newKitapRef, kitap)
+      .then(() => {
+        console.log('Kitap başarıyla kaydedildi.');
+      })
+      .catch((error) => {
+        console.error('Kitap kaydedilirken bir hata oluştu:', error);
+      });
+  };
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -76,7 +87,7 @@ const Kitap = () => {
           data={filteredKitaplar}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.item}>
+            <View style={styles.item}>
               <Image
                 style={styles.image}
                 source={{ uri: item.resimBağlantısı }}
@@ -88,8 +99,11 @@ const Kitap = () => {
                 <Text style={styles.details}>Kategori: {item.kategori}</Text>
                 <Text style={styles.details}>Sayfa Sayısı: {item.sayfa}</Text>
                 <Text style={styles.details}>Yıl: {item.yıl}</Text>
+                <TouchableOpacity style={styles.saveButton} onPress={() => handleSave(item)}>
+                  <Text style={styles.saveButtonText}>Kaydet</Text>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
+            </View>
           )}
         />
       )}
@@ -176,6 +190,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 3,
     color: '#666',
+  },
+  saveButton: {
+    marginTop: 10,
+    backgroundColor: '#931621',
+    padding: 10,
+    borderRadius: 5,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

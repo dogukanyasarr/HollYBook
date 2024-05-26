@@ -39,6 +39,7 @@ const App = ({navigation}) => {
         <Stack.Screen name='Series' component={Series}/>
       </Stack.Navigator>
     </NavigationContainer>
+
   )
 }
 

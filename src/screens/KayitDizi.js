@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { database } from '../screens/FirebaseDataSet'; // firebaseConfig dosyanızın yolunu ayarlayın
-import { ref, onValue, off } from 'firebase/database';
+import { ref, onValue, off, remove } from 'firebase/database';
 
 const KayitDizi = () => {
   const [loading, setLoading] = useState(true);
@@ -14,7 +14,7 @@ const KayitDizi = () => {
 
     const handleData = (snapshot) => {
       if (snapshot.exists()) {
-        const data = Object.values(snapshot.val());
+        const data = Object.entries(snapshot.val()).map(([key, value]) => ({ key, ...value }));
         setDiziler(data);
         setFilteredDiziler(data);
         setLoading(false);
@@ -49,6 +49,34 @@ const KayitDizi = () => {
     }
   }, [searchQuery, diziler]);
 
+  const handleDelete = (key) => {
+    Alert.alert(
+      "Diziyi Sil",
+      "Bu diziyi silmek istediğinizden emin misiniz?",
+      [
+        {
+          text: "İptal",
+          style: "cancel"
+        },
+        {
+          text: "Evet",
+          onPress: () => {
+            const diziRef = ref(database, `yeniDiziler/${key}`);
+            remove(diziRef)
+              .then(() => {
+                console.log('Dizi başarıyla silindi.');
+                setDiziler(diziler.filter(dizi => dizi.key !== key));
+                setFilteredDiziler(filteredDiziler.filter(dizi => dizi.key !== key));
+              })
+              .catch((error) => {
+                console.error('Dizi silinirken bir hata oluştu:', error);
+              });
+          }
+        }
+      ]
+    );
+  };
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -76,7 +104,7 @@ const KayitDizi = () => {
           data={filteredDiziler}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.item}>
+            <View style={styles.item}>
               <Image
                 style={styles.image}
                 source={{ uri: item.url }}
@@ -90,8 +118,11 @@ const KayitDizi = () => {
                 <Text style={styles.details}>Ülke: {item.ulke}</Text>
                 <Text style={styles.details}>Durum: {item.durum}</Text>
                 <Text style={styles.details}>Oyuncular: {item.oyuncular.join(', ')}</Text>
+                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.key)}>
+                  <Text style={styles.deleteButtonText}>Sil</Text>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
+            </View>
           )}
         />
       )}
@@ -179,6 +210,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 3,
     color: '#666',
+  },
+  deleteButton: {
+    marginTop: 10,
+    backgroundColor: '#931621',
+    padding: 10,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

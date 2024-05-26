@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import { database } from '../screens/FirebaseDataSet'; // firebaseConfig dosyanızın yolunu ayarlayın
-import { ref, onValue, off } from 'firebase/database';
+import { ref, onValue, off, push } from 'firebase/database';
 
 const Series = () => {
   const [loading, setLoading] = useState(true);
@@ -47,6 +47,17 @@ const Series = () => {
     setFilteredSeries(filteredData);
   };
 
+  const handleSave = (item) => {
+    const newSeriesRef = ref(database, 'yeniDiziler');
+    push(newSeriesRef, item)
+      .then(() => {
+        console.log('Dizi başarıyla kaydedildi.');
+      })
+      .catch((error) => {
+        console.error('Dizi kaydedilirken bir hata oluştu:', error);
+      });
+  };
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -87,6 +98,9 @@ const Series = () => {
                 <Text style={styles.details}>Ülke: {item.ulke}</Text>
                 <Text style={styles.details}>Durum: {item.durum}</Text>
                 <Text style={styles.details}>Oyuncular: {item.oyuncular.join(', ')}</Text>
+                <TouchableOpacity style={styles.saveButton} onPress={() => handleSave(item)}>
+                  <Text style={styles.saveButtonText}>Kaydet</Text>
+                </TouchableOpacity>
               </View>
             </TouchableOpacity>
           )}
@@ -170,6 +184,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 3,
     color: '#666',
+  },
+  saveButton: {
+    marginTop: 10,
+    backgroundColor: '#931621',
+    padding: 10,
+    borderRadius: 5,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

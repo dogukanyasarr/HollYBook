@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { database } from '../screens/FirebaseDataSet'; // firebaseConfig dosyanızın yolunu ayarlayın
-import { ref, onValue, off } from 'firebase/database';
+import { ref, onValue, off, remove } from 'firebase/database';
 
 const KayitKitap = () => {
   const [loading, setLoading] = useState(true);
@@ -14,7 +14,7 @@ const KayitKitap = () => {
 
     const handleData = (snapshot) => {
       if (snapshot.exists()) {
-        const data = Object.values(snapshot.val());
+        const data = Object.entries(snapshot.val()).map(([key, value]) => ({ key, ...value }));
         setKitaplar(data);
         setFilteredKitaplar(data);
         setLoading(false);
@@ -49,6 +49,34 @@ const KayitKitap = () => {
     }
   }, [searchQuery, kitaplar]);
 
+  const handleDelete = (key) => {
+    Alert.alert(
+      "Kitabı Sil",
+      "Bu kitabı silmek istediğinizden emin misiniz?",
+      [
+        {
+          text: "İptal",
+          style: "cancel"
+        },
+        {
+          text: "Evet",
+          onPress: () => {
+            const kitapRef = ref(database, `yeniKitap/${key}`);
+            remove(kitapRef)
+              .then(() => {
+                console.log('Kitap başarıyla silindi.');
+                setKitaplar(kitaplar.filter(kitap => kitap.key !== key));
+                setFilteredKitaplar(filteredKitaplar.filter(kitap => kitap.key !== key));
+              })
+              .catch((error) => {
+                console.error('Kitap silinirken bir hata oluştu:', error);
+              });
+          }
+        }
+      ]
+    );
+  };
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -76,7 +104,7 @@ const KayitKitap = () => {
           data={filteredKitaplar}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.item}>
+            <View style={styles.item}>
               <Image
                 style={styles.image}
                 source={{ uri: item.resimBağlantısı }}
@@ -88,8 +116,11 @@ const KayitKitap = () => {
                 <Text style={styles.details}>Kategori: {item.kategori}</Text>
                 <Text style={styles.details}>Sayfa Sayısı: {item.sayfa}</Text>
                 <Text style={styles.details}>Yıl: {item.yıl}</Text>
+                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.key)}>
+                  <Text style={styles.deleteButtonText}>Sil</Text>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
+            </View>
           )}
         />
       )}
@@ -177,6 +208,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 3,
     color: '#666',
+  },
+  deleteButton: {
+    marginTop: 10,
+    backgroundColor: '#931621',
+    padding: 10,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

@@ -7,6 +7,7 @@ import Checkbox from "expo-checkbox"
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthChanged, signOut, onAuthStateChanged } from 'firebase/auth';
 import app from '../screens/FirebaseDataSet'; // Firebase bağlantısı
+import { useNavigation } from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
 
@@ -101,17 +102,19 @@ const Login = ({ email, setEmail, password, setPassword, isLogin, setIsLogin, ha
         Şifremi Unuttum
       </Text>
     </View>
+    
   );
 }
 
-const Logined = ({ user, handleAuthentication, navigation }) => {
+const Logined = ({ user, handleAuthentication }) => {
+  const navigation = useNavigation();
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Button
         title="Çıkış Yap"
         onPress={() => {
           handleAuthentication();
-          navigation.navigate("Profi");
         }}
       />
       <Pressable

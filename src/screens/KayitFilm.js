@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { database } from '../screens/FirebaseDataSet'; // firebaseConfig dosyanızın yolunu ayarlayın
-import { ref, onValue, off } from 'firebase/database';
+import { ref, onValue, off, remove } from 'firebase/database';
 
 const KayitFilm = () => {
   const [loading, setLoading] = useState(true);
@@ -14,7 +14,7 @@ const KayitFilm = () => {
 
     const handleData = (snapshot) => {
       if (snapshot.exists()) {
-        const data = Object.values(snapshot.val());
+        const data = Object.entries(snapshot.val()).map(([key, value]) => ({ key, ...value }));
         setFilmler(data);
         setFilteredFilmler(data);
         setLoading(false);
@@ -43,11 +43,39 @@ const KayitFilm = () => {
     } else {
       setFilteredFilmler(
         filmler.filter(film => 
-          film.başlık.toLowerCase().includes(searchQuery.toLowerCase())
+          film.title.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     }
   }, [searchQuery, filmler]);
+
+  const handleDelete = (key) => {
+    Alert.alert(
+      "Filmi Sil",
+      "Bu filmi silmek istediğinizden emin misiniz?",
+      [
+        {
+          text: "İptal",
+          style: "cancel"
+        },
+        {
+          text: "Evet",
+          onPress: () => {
+            const filmRef = ref(database, `yeniFilm/${key}`);
+            remove(filmRef)
+              .then(() => {
+                console.log('Film başarıyla silindi.');
+                setFilmler(filmler.filter(film => film.key !== key));
+                setFilteredFilmler(filteredFilmler.filter(film => film.key !== key));
+              })
+              .catch((error) => {
+                console.error('Film silinirken bir hata oluştu:', error);
+              });
+          }
+        }
+      ]
+    );
+  };
 
   if (loading) {
     return (
@@ -76,18 +104,21 @@ const KayitFilm = () => {
           data={filteredFilmler}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.item}>
+            <View style={styles.item}>
               <Image
                 style={styles.image}
                 source={{ uri: item.thumbnail }}
               />
               <View style={styles.textContainer}>
-              <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.title}>{item.title}</Text>
                 <Text style={styles.details}>Yıl: {item.year}</Text>
                 <Text style={styles.details}>Tür: {item.genres.join(', ')}</Text>
                 <Text style={styles.details}>Oyuncular: {item.cast.join(', ')}</Text>
+                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.key)}>
+                  <Text style={styles.deleteButtonText}>Sil</Text>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
+            </View>
           )}
         />
       )}
@@ -175,6 +206,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 3,
     color: '#666',
+  },
+  deleteButton: {
+    marginTop: 10,
+    backgroundColor: '#931621',
+    padding: 10,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

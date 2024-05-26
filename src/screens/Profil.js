@@ -80,7 +80,7 @@ const Profil = ({ navigation }) => {
       <View style={styles.boxContainer}>
         <View style={styles.box}>
           <Image
-            source={require('./images/dizi.jpg')}
+            source={require('./images/hakeretlifilm.gif')}
             style={styles.boxImage}
           />
           <View style={styles.buttonContainer}>
@@ -88,13 +88,13 @@ const Profil = ({ navigation }) => {
               style={styles.buttonFilm}
               onPress={() => navigation.navigate("KayitFilm")}
             >
-              <Text style={styles.buttonText}>Filmler!</Text>
+              <Text style={styles.buttonText}>Filmlerim</Text>
             </Pressable>
           </View>
         </View>
         <View style={styles.box}>
           <Image
-            source={require('./images/dizi.jpg')}
+            source={require('./images/hareketlidizi.gif')}
             style={styles.boxImage}
           />
           <View style={styles.buttonContainer}>
@@ -102,13 +102,13 @@ const Profil = ({ navigation }) => {
               style={styles.buttonFilm}
               onPress={() => navigation.navigate("KayitDizi")}
             >
-              <Text style={styles.buttonText}>Diziler!</Text>
+              <Text style={styles.buttonText}>Dizilerim</Text>
             </Pressable>
           </View>
         </View>
         <View style={styles.box}>
           <Image
-            source={require('./images/dizi.jpg')}
+            source={require('./images/hareketlikitap.gif')}
             style={styles.boxImage}
           />
           <View style={styles.buttonContainer}>
@@ -116,7 +116,7 @@ const Profil = ({ navigation }) => {
               style={styles.buttonFilm}
               onPress={() => navigation.navigate("KayitKitap")}
             >
-              <Text style={styles.buttonText}>Kitaplar!</Text>
+              <Text style={styles.buttonText}>Kitaplarım</Text>
             </Pressable>
           </View>
         </View>
@@ -209,8 +209,9 @@ const styles = StyleSheet.create({
   boxImage: {
     width: 80,
     height: 80,
-    borderRadius: 10,
+    borderRadius: 100,
     marginRight: 10,
+
   },
   buttonContainer: {
     flex: 1,
@@ -232,19 +233,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#931621',
     paddingVertical: 10,
-    top:15
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    borderRadius:5,
+    borderTopWidth:2,
+    borderColor:'white',
+    paddingTop:20,
+    borderTopRightRadius:10,
+    borderTopLeftRadius:10,
   },
   iconButton: {
     flex: 1,
     alignItems: 'center',
   },
   iconImage: {
-    width: 35,
-    height: 35,
+    width: 30,
+    height: 30,
   },
 });
+
 
 export default Profil;
 
