@@ -76,19 +76,16 @@ const Welcome = ({navigation}) => {
             <Text style={styles.baslik}>HOLLYBOOK</Text>
             
             <Pressable style={styles.buttonFilm}
-            onPress={()=> navigation.navigate("Movie")}
             >
               <Text style={{color:'white', fontWeight:'bold', fontSize:20}}>Filmler!</Text>
             </Pressable>
             
             <Pressable style={styles.buttonKitap}
-            onPress={()=> navigation.navigate("Kitap")}
             >
               <Text style={{color:'white', fontWeight:'bold', fontSize:20}}>Kitaplar!</Text>
             </Pressable>
             
             <Pressable style={styles.buttonDizi}
-            onPress={()=> navigation.navigate("Series")}
             >
               <Text style={{color:'white', fontWeight:'bold', fontSize:20}}>Diziler!</Text>
             </Pressable>

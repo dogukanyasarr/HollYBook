@@ -2,12 +2,21 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, Image, StyleSheet, Alert } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, setDoc, doc } from 'firebase/firestore';
 import app from '../screens/FirebaseDataSet'; // Firebase bağlantısı
 
 const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+  const [fullName, setFullName] = useState('');
+
+  // Kaydedilen veriler için boş diziler
+  const kaydedilenler = {
+    yeniDizi: [],
+    yeniFilm: [],
+    yeniKitap: [],
+  };
 
   const handleSignup = async () => {
     // E-posta formatını kontrol etmek için regex
@@ -23,11 +32,27 @@ const Signup = () => {
       return;
     }
 
+    if (!fullName.trim()) {
+      Alert.alert('Ad Soyad Gerekli', 'Lütfen adınızı ve soyadınızı giriniz.');
+      return;
+    }
+
     const auth = getAuth(app);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Firestore'da kullanıcı bilgilerini ve kaydedilenler bilgilerini kaydet
+      const db = getFirestore(app);
+      await setDoc(doc(db, 'users', user.uid), {
+        fullName: fullName,
+        email: email,
+        password: password, // Şifreyi de Firestore'a kaydet
+        kaydedilenler: kaydedilenler, // Kaydedilen verileri Firestore'a ekleyin
+      });
+
       // Başarılı kayıt işlemi
-      console.log('Yeni kullanıcı oluşturuldu:', userCredential.user.uid);
+      console.log('Yeni kullanıcı oluşturuldu:', user.uid);
       Alert.alert('Başarılı', 'Hesap başarıyla oluşturuldu.');
     } catch (error) {
       console.error('Kullanıcı oluşturma hatası:', error.message);
@@ -52,6 +77,12 @@ const Signup = () => {
 
       <TextInput
         style={[styles.input, { marginTop: 30 }]}
+        onChangeText={(text) => setFullName(text)}
+        placeholder="Ad Soyad Giriniz.."
+        autoCapitalize="words"
+      />
+      <TextInput
+        style={styles.input}
         onChangeText={(text) => setEmail(text)}
         placeholder="E-mail Giriniz.."
         autoCapitalize="none"

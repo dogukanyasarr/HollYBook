@@ -1,18 +1,17 @@
-import { View, Text, StyleSheet, TextInput, Pressable, Image, Button, ScrollView } from "react-native";
-import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from "react";
-import { NavigationContainer } from '@react-navigation/native';
+import { View, Text, StyleSheet, TextInput, Pressable, Image } from "react-native";
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Checkbox from "expo-checkbox"
-import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthChanged, signOut, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import app from '../screens/FirebaseDataSet'; // Firebase bağlantısı
-import { useNavigation } from '@react-navigation/native';
+import Checkbox from "expo-checkbox";
+import Profil from "../screens/Profil"; // Profil bileşeni eklendi
 
 const Stack = createNativeStackNavigator();
 
 const Login = ({ email, setEmail, password, setPassword, isLogin, setIsLogin, handleAuthentication }) => {
   const [isChecked, setIsChecked] = useState(false);
+
   return (
     <View style={styles.container}>
       <Image
@@ -106,33 +105,12 @@ const Login = ({ email, setEmail, password, setPassword, isLogin, setIsLogin, ha
   );
 }
 
-const Logined = ({ user, handleAuthentication }) => {
-  const navigation = useNavigation();
-
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button
-        title="Çıkış Yap"
-        onPress={() => {
-          handleAuthentication();
-        }}
-      />
-      <Pressable
-        onPress={() => navigation.navigate("Profil")}
-      >
-        <Text style={{ alignItems: 'center', top: 20 }}>
-          Giriş Başarılı! Profiline Git
-        </Text>
-      </Pressable>
-    </View>
-  );
-};
-
 const App = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [isLogin, setIsLogin] = useState(true);
+  const navigation = useNavigation();
 
   const auth = getAuth(app);
   useEffect(() => {
@@ -150,17 +128,17 @@ const App = () => {
         await signOut(auth);
       } else {
         if (isLogin) {
-          
           if (password) {
             await signInWithEmailAndPassword(auth, email, password);
             console.log('Login successful');
+            navigation.navigate("Profil"); // Doğrudan Profil sayfasına yönlendir
           } else {
             console.error('Missing password for login');
           }
         } else {
-          
           await createUserWithEmailAndPassword(auth, email, password);
           console.log('New user created successfully');
+          navigation.navigate("Profil"); // Doğrudan Profil sayfasına yönlendir
         }
       }
     } catch (error) {
@@ -171,7 +149,7 @@ const App = () => {
   return (
     <View style={styles.container}>
       {user ? (
-        <Logined user={user} handleAuthentication={handleAuthentication} />
+        <Profil user={user} />
       ) : (
         <Login
           email={email}
